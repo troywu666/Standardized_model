@@ -2,7 +2,7 @@
 # @Author: Troy Wu
 # @Date:   2020-02-11 04:34:22
 # @Last Modified by:   Troy Wu
-# @Last Modified time: 2020-02-17 17:17:18
+# @Last Modified time: 2020-02-18 11:24:46
 
 from sklearn.feature_selection import VarianceThreshold, SelectFromModel, RFE
 from sklearn.feature_selection import chi2, SelectKBest, f_classif, f_regression, mutual_info_classif, mutual_info_regression
@@ -15,7 +15,7 @@ class Selector():
 	def __init__(self, fea):
 		self.fea = fea
 
-	def variance(self, threshold = 0.1):
+	def variance(self, threshold = 0):
 		'''
 		method可选“var_filter”、“chi2_filter”、“f_clas_filter、“f_reg_filter”、“mutual_clas_filter”、“mutual_reg_filter”三种
 		'''
@@ -41,13 +41,11 @@ class Selector():
 		else:
 			print('The parameters were worng!')
 
-	def with_model(self, estimator, y, threshold, step = None, method = 'wrapper'):
-		if method == 'wrapper':
-			selector = RFE(estimator, threshold, step).fit(self.fea, y)
-			return selector, selector.transform(self.fea)
-		if method == 'embedded':
-			selector = SelectFromModel(estimator, threshold).fit(self.fea, y)
-			return selector, selector.transform(self.fea)
-		else:
-			print('The parameters were worng!')
+	def wrapper(self, estimator, y, n, step = None):
+		selector = RFE(estimator, n, step).fit(self.fea, y)
+		return selector, selector.transform(self.fea)
+	
+	def embedded(self, estimator, y, threshold):
+		selector = SelectFromModel(estimator, threshold).fit(self.fea, y)
+		return selector, selector.transform(self.fea)
 

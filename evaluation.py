@@ -2,7 +2,7 @@
 # @Author: Troy Wu
 # @Date:   2020-02-11 19:48:02
 # @Last Modified by:   Troy Wu
-# @Last Modified time: 2020-02-17 00:46:22
+# @Last Modified time: 2020-02-18 15:52:31
 
 import pandas as pd
 import numpy as np
@@ -12,7 +12,7 @@ plt.style.use('seaborn-paper')
 import seaborn as sn
 from scikitplot.metrics import plot_confusion_matrix, plot_calibration_curve, plot_roc, plot_ks_statistic, plot_precision_recall, plot_lift_curve, plot_cumulative_gain
 
-class metrics():
+class Metrics():
 	def __init__(self, y_true, y_pred):
 		self.y_true = y_true
 
@@ -31,7 +31,8 @@ class metrics():
 		return accuracy_score(self.y_true, self.y_pred1.round()),\
 				recall_score(self.y_true, self.y_pred1.round()), \
 				precision_score(self.y_true, self.y_pred1.round()), \
-				roc_auc_score(self.y_true, self.y_pred1)
+				roc_auc_score(self.y_true, self.y_pred1), \
+				f1_score(self.y_true, self.y_pred1.round())
 
 	def eval_plot(self):
 		f, axes = plt.subplots(nrows = 1, ncols = 7, figsize = (64, 9))
@@ -45,7 +46,7 @@ class metrics():
 		plt.show()
 
 
-class metrics_comparison(metrics):
+class Metrics_comparison(metrics):
 	def __init__(self, y_true, y_pred):
 		metrics.__init__(self, y_true, y_pred)
 		self.items = y_pred.items()
@@ -60,7 +61,7 @@ class metrics_comparison(metrics):
 				self.y_pred2 = pred
 				self.y_pred1 = pred.argmax(axis = 1)
 			compare_frame[item] = self.eval_score()
-		compare_frame.index = ['accuracy_score', 'recall_score', 'precision_score', 'roc_auc_score']
+		compare_frame.index = ['accuracy_score', 'recall_score', 'precision_score', 'roc_auc_score', 'f1_score']
 		return compare_frame
 
 	def compare_plot(self):

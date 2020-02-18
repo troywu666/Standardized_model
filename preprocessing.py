@@ -2,7 +2,7 @@
 # @Author: Troy Wu
 # @Date:   2020-02-11 06:46:40
 # @Last Modified by:   Troy Wu
-# @Last Modified time: 2020-02-17 19:08:17
+# @Last Modified time: 2020-02-18 15:31:23
 
 from sklearn.preprocessing import MinMaxScaler, StandardScaler, OrdinalEncoder, OneHotEncoder, Binarizer
 from sklearn.impute import SimpleImputer
@@ -47,4 +47,4 @@ class Transformer():
 			print('The parameters were worng!')
 
 	def log(self):
-		return self.data.applymap(np.log)
+		return self.data.applymap(lambda x: np.log(1 + x))
