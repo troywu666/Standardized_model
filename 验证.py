@@ -4,10 +4,9 @@
 @Autor: Troy Wu
 @Date: 2020-02-12 16:44:46
 @LastEditors: Troy Wu
-@LastEditTime: 2020-02-18 15:27:43
+@LastEditTime: 2020-02-19 10:34:01
 '''
 
-import logging
 #import os
 #print(os.getcwd())
 import sys
@@ -19,11 +18,13 @@ from data_exploring import Explore
 from feature_selection import Selector
 from preprocessing import Transformer
 from predict import Prediction
+from print_in_log import save_log
 from sklearn.datasets import load_breast_cancer
 import pandas as pd
 import numpy as np
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
+import logging
 import configparser
 
 config = configparser.ConfigParser()

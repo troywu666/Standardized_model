@@ -2,7 +2,7 @@
 # @Author: Troy Wu
 # @Date:   2020-02-11 19:48:02
 # @Last Modified by:   Troy Wu
-# @Last Modified time: 2020-02-18 15:52:31
+# @Last Modified time: 2020-02-19 10:32:31
 
 import pandas as pd
 import numpy as np
@@ -46,7 +46,7 @@ class Metrics():
 		plt.show()
 
 
-class Metrics_comparison(metrics):
+class Metrics_comparison(Metrics):
 	def __init__(self, y_true, y_pred):
 		metrics.__init__(self, y_true, y_pred)
 		self.items = y_pred.items()
