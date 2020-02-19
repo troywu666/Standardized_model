@@ -1,2 +1,54 @@
-2020-02-19 10:48:07,909 - print_in_log.py[line:26] - INFO: Model pickle complete.
-02-19 10:48:07,909 - print_in_log.py[line:26] - INFO: Model pickle complete.
+2020-02-19 12:13:11,092 - print_in_log.py[line:29] - INFO: DataFrame load complete.
+2020-02-19 12:13:17,478 - utils.py[line:141] - INFO: NumExpr defaulting to 8 threads.
+2020-02-19 12:13:44,778 - print_in_log.py[line:29] - INFO: Exploring complete.
+2020-02-19 12:14:00,890 - print_in_log.py[line:29] - INFO: Data preprocessing complete.
+2020-02-19 12:14:28,906 - print_in_log.py[line:29] - INFO: Feature selection complete.
+2020-02-19 12:15:49,227 - print_in_log.py[line:29] - INFO: Model pickle complete.
+2020-02-19 12:16:04,520 - print_in_log.py[line:29] - INFO: Predict complete.
+2020-02-19 12:25:40,634 - print_in_log.py[line:29] - INFO: DataFrame load complete.
+2020-02-19 12:25:40,747 - utils.py[line:141] - INFO: NumExpr defaulting to 8 threads.
+2020-02-19 12:25:42,152 - print_in_log.py[line:29] - INFO: Exploring complete.
+2020-02-19 12:25:42,160 - print_in_log.py[line:29] - INFO: Data preprocessing complete.
+2020-02-19 12:25:42,575 - print_in_log.py[line:29] - INFO: Feature selection complete.
+2020-02-19 12:25:43,304 - print_in_log.py[line:29] - INFO: Model training complete.
+2020-02-19 12:25:43,316 - print_in_log.py[line:29] - INFO: Model pickle complete.
+2020-02-19 12:25:43,322 - print_in_log.py[line:29] - INFO: Predict complete.
+2020-02-19 13:05:35,523 - print_in_log.py[line:29] - INFO: DataFrame load complete.
+2020-02-19 13:05:35,657 - utils.py[line:141] - INFO: NumExpr defaulting to 8 threads.
+2020-02-19 13:06:54,167 - print_in_log.py[line:29] - INFO: DataFrame load complete.
+2020-02-19 13:06:54,289 - utils.py[line:141] - INFO: NumExpr defaulting to 8 threads.
+2020-02-19 14:54:02,495 - print_in_log.py[line:29] - INFO: DataFrame load complete.
+2020-02-19 14:54:02,624 - utils.py[line:141] - INFO: NumExpr defaulting to 8 threads.
+2020-02-19 14:54:04,069 - print_in_log.py[line:29] - INFO: Exploring complete.
+2020-02-19 14:54:04,077 - print_in_log.py[line:29] - INFO: Data preprocessing complete.
+2020-02-19 14:54:04,519 - print_in_log.py[line:29] - INFO: Feature selection complete.
+2020-02-19 16:08:06,555 - print_in_log.py[line:29] - INFO: DataFrame load complete.
+2020-02-19 16:08:06,678 - utils.py[line:141] - INFO: NumExpr defaulting to 8 threads.
+2020-02-19 16:08:08,153 - print_in_log.py[line:29] - INFO: Exploring complete.
+2020-02-19 16:08:08,163 - print_in_log.py[line:29] - INFO: Data preprocessing complete.
+2020-02-19 16:08:08,595 - print_in_log.py[line:29] - INFO: Feature selection complete.
+2020-02-19 16:10:42,067 - print_in_log.py[line:29] - INFO: DataFrame load complete.
+2020-02-19 16:10:42,224 - utils.py[line:141] - INFO: NumExpr defaulting to 8 threads.
+2020-02-19 16:10:43,649 - print_in_log.py[line:29] - INFO: Exploring complete.
+2020-02-19 16:10:43,654 - print_in_log.py[line:29] - INFO: Data preprocessing complete.
+2020-02-19 16:10:44,061 - print_in_log.py[line:29] - INFO: Feature selection complete.
+2020-02-19 16:11:48,849 - print_in_log.py[line:29] - INFO: DataFrame load complete.
+2020-02-19 16:11:48,964 - utils.py[line:141] - INFO: NumExpr defaulting to 8 threads.
+2020-02-19 16:11:50,362 - print_in_log.py[line:29] - INFO: Exploring complete.
+2020-02-19 16:11:50,367 - print_in_log.py[line:29] - INFO: Data preprocessing complete.
+2020-02-19 16:11:50,798 - print_in_log.py[line:29] - INFO: Feature selection complete.
+2020-02-19 16:13:29,690 - print_in_log.py[line:29] - INFO: DataFrame load complete.
+2020-02-19 16:13:29,809 - utils.py[line:141] - INFO: NumExpr defaulting to 8 threads.
+2020-02-19 16:13:31,258 - print_in_log.py[line:29] - INFO: Exploring complete.
+2020-02-19 16:13:31,268 - print_in_log.py[line:29] - INFO: Data preprocessing complete.
+2020-02-19 16:13:31,714 - print_in_log.py[line:29] - INFO: Feature selection complete.
+2020-02-19 16:13:51,311 - print_in_log.py[line:29] - INFO: DataFrame load complete.
+2020-02-19 16:13:51,425 - utils.py[line:141] - INFO: NumExpr defaulting to 8 threads.
+2020-02-19 16:13:52,832 - print_in_log.py[line:29] - INFO: Exploring complete.
+2020-02-19 16:13:52,841 - print_in_log.py[line:29] - INFO: Data preprocessing complete.
+2020-02-19 16:13:53,278 - print_in_log.py[line:29] - INFO: Feature selection complete.
+2020-02-19 16:30:28,963 - print_in_log.py[line:29] - INFO: DataFrame load complete.
+2020-02-19 16:30:29,087 - utils.py[line:141] - INFO: NumExpr defaulting to 8 threads.
+2020-02-19 16:30:30,563 - print_in_log.py[line:29] - INFO: Exploring complete.
+2020-02-19 16:30:30,572 - print_in_log.py[line:29] - INFO: Data preprocessing complete.
+2020-02-19 16:30:31,026 - print_in_log.py[line:29] - INFO: Feature selection complete.
