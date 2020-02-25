@@ -2,7 +2,7 @@
 # @Author: Troy Wu
 # @Date:   2020-02-11 21:29:47
 # @Last Modified by:   Troy Wu
-# @Last Modified time: 2020-02-19 16:25:26
+# @Last Modified time: 2020-02-21 16:05:14
 
 import pandas as pd
 import numpy as np
@@ -37,7 +37,7 @@ class Explore():
 		#plt.show()
 
 	def distplot(self):
-		df_num = self.df.select_dtypes(exclude = [np.object])
+		df_num = self.df.select_dtypes(exclude = [np.object]).dropna()
 		f, ax = plt.subplots(len(df_num.columns), 1, figsize = (10, len(df_num.columns) * 6))
 		for n, col in enumerate(df_num.columns):
 			sns.distplot(df_num[col], ax = ax[n])

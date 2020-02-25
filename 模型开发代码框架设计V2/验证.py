@@ -4,7 +4,7 @@
 @Autor: Troy Wu
 @Date: 2020-02-12 16:44:46
 @LastEditors: Troy Wu
-@LastEditTime: 2020-02-25 15:51:58
+@LastEditTime: 2020-02-21 16:05:33
 '''
 
 # 首次运行可能需要将那些包所在路径加入到环境变量当中
@@ -58,7 +58,6 @@ save_log.logging('Exploring complete.')
 
 
 # 数据预处理
-transformer, transformed_data = Transformer(df['mean radius']).box_cox()
 transformer, transformed_data = Transformer(df).scaler('standard')
 transformer, transformed_data = Transformer(transformed_data).fillna(fill_value = 2, strategy = 'constant')
 #transformer, transformed_data = Transformer(transformed_data).encoder(method = 'binarizer', threshold = 3)
@@ -97,7 +96,7 @@ Metrics_comparison(y_true, pred).compare_plot()
 save_log.logging('Evaluation complete.')
 
 # 模型预测
-transformed_data = Prediction().data_preprocess(transformer, df['mean texture'])
+transformed_data = Prediction().data_preprocess(transformer, df)
 selected_data = Prediction().feature_select(selector, transformed_data)
 Prediction().model_predict(model_lgb, df, model_cate = 'lgb')
 save_log.logging('Prediction complete.')

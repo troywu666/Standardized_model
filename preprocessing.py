@@ -2,12 +2,28 @@
 # @Author: Troy Wu
 # @Date:   2020-02-11 06:46:40
 # @Last Modified by:   Troy Wu
-# @Last Modified time: 2020-02-18 15:31:23
+# @Last Modified time: 2020-02-25 15:54:58
 
 from sklearn.preprocessing import MinMaxScaler, StandardScaler, OrdinalEncoder, OneHotEncoder, Binarizer
 from sklearn.impute import SimpleImputer
+from sklearn.base import TransformerMixin
 import pandas as pd
 import numpy as np
+from scipy import stats
+
+class Box_cox(TransformerMixin):
+	def __init__(self):
+		self.best_lmbda = 0
+	
+	def fit(self, data):
+		transformed_array, best_lmbda = stats.boxcox(data.values)
+		self.best_lmbda = best_lmbda
+		return self
+
+	def transform(self, data, lmbda = None):
+		if lmbda == None:
+			self.lmbda = lmbda
+		return stats.boxcox(data.values, lmbda = self.best_lmbda)
 
 class Transformer():
 	def __init__(self, data):
@@ -46,5 +62,6 @@ class Transformer():
 		else:
 			print('The parameters were worng!')
 
-	def log(self):
-		return self.data.applymap(lambda x: np.log(1 + x))
+	def box_cox(self, lmbda = None):
+		transformer = Box_cox().fit(self.data)
+		return transformer, transformer.transform(self.data, lmbda = lmbda)
