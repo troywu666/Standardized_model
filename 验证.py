@@ -4,13 +4,12 @@
 @Autor: Troy Wu
 @Date: 2020-02-12 16:44:46
 @LastEditors: Troy Wu
-@LastEditTime: 2020-02-25 15:51:58
+@LastEditTime: 2020-02-27 14:11:28
 '''
 
 # 首次运行可能需要将那些包所在路径加入到环境变量当中
 import sys
 sys.path.append(r'D:\troywu666\business_stuff\民生对公项目\模型标准化')
-import seaborn as sns
 from evaluation import Metrics, Metrics_comparison
 from train_val import Model_training
 from model_io import Model_pickle

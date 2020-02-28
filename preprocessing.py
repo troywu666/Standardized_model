@@ -2,9 +2,9 @@
 # @Author: Troy Wu
 # @Date:   2020-02-11 06:46:40
 # @Last Modified by:   Troy Wu
-# @Last Modified time: 2020-02-25 15:54:58
+# @Last Modified time: 2020-02-27 14:20:00
 
-from sklearn.preprocessing import MinMaxScaler, StandardScaler, OrdinalEncoder, OneHotEncoder, Binarizer
+from sklearn.preprocessing import MinMaxScaler, StandardScaler, OrdinalEncoder, OneHotEncoder, Binarizer, PowerTransformer
 from sklearn.impute import SimpleImputer
 from sklearn.base import TransformerMixin
 import pandas as pd
@@ -65,3 +65,7 @@ class Transformer():
 	def box_cox(self, lmbda = None):
 		transformer = Box_cox().fit(self.data)
 		return transformer, transformer.transform(self.data, lmbda = lmbda)
+
+	def johnson(self, standardize = True, copy = True):
+		transformer = PowerTransformer(method = 'yeo-johnson', standardize = standardize, copy = copy).fit(self.data)
+		return transformer, transformer.transform(self, data)
