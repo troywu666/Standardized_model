@@ -2,7 +2,7 @@
 # @Author: Troy Wu
 # @Date:   2020-02-11 04:34:22
 # @Last Modified by:   Troy Wu
-# @Last Modified time: 2020-02-18 11:24:46
+# @Last Modified time: 2020-03-04 21:02:21
 
 from sklearn.feature_selection import VarianceThreshold, SelectFromModel, RFE
 from sklearn.feature_selection import chi2, SelectKBest, f_classif, f_regression, mutual_info_classif, mutual_info_regression
@@ -26,16 +26,16 @@ class Selector():
 		if method == 'chi2_filter':
 			selector = SelectKBest(chi2, k = k).fit(self.fea, y)
 			return selector, selector.transform(self.fea)
-		if method == 'f_clas_filter':
+		elif method == 'f_clas_filter':
 			selector = SelectKBest(f_classif, k = k).fit(self.fea, y)
 			return selector, selector.transform(self.fea)
-		if method == 'f_reg_filter':
+		elif method == 'f_reg_filter':
 			selector = SelectKBest(f_regression, k = k).fit(self.fea, y)
 			return selector, selector.transform(self.fea)
-		if method == 'mutual_clas_filter':
+		elif method == 'mutual_clas_filter':
 			selector = SelectKBest(mutual_info_classif, k = k).fit(self.fea, y)
 			return selector, selector.transform(self.fea)
-		if method == 'mutual_reg_filter':
+		elif method == 'mutual_reg_filter':
 			selector = SelectKBest(mutual_info_regression, k = k).fit(self.fea, y)
 			return selector, selector.transform(self.fea)
 		else:

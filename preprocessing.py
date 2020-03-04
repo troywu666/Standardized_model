@@ -2,7 +2,7 @@
 # @Author: Troy Wu
 # @Date:   2020-02-11 06:46:40
 # @Last Modified by:   Troy Wu
-# @Last Modified time: 2020-02-27 14:20:00
+# @Last Modified time: 2020-03-04 21:01:45
 
 from sklearn.preprocessing import MinMaxScaler, StandardScaler, OrdinalEncoder, OneHotEncoder, Binarizer, PowerTransformer
 from sklearn.impute import SimpleImputer
@@ -33,7 +33,7 @@ class Transformer():
 		if method == 'min_max':
 			transformer = MinMaxScaler().fit(self.data)
 			return transformer, transformer.transform(self.data)
-		if method == 'standard':
+		elif method == 'standard':
 			transformer = StandardScaler().fit(self.data)
 			return transformer, transformer.transform(self.data)
 		else:
@@ -53,10 +53,10 @@ class Transformer():
 		if method == 'onehot':
 			transformer = OneHotEncoder().fit(self.data)
 			return transformer, transformer.transform(self.data)
-		if method == 'binarizer':
+		elif method == 'binarizer':
 			transformer = Binarizer(threshold).fit(self.data)
 			return transformer, transformer.transform(self.data)
-		if method == 'ordinal':
+		elif method == 'ordinal':
 			transformer = OrdinalEncoder().fit(self.data)
 			return transformer, transformer.transform(self.data)
 		else:

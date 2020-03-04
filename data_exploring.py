@@ -2,7 +2,7 @@
 # @Author: Troy Wu
 # @Date:   2020-02-11 21:29:47
 # @Last Modified by:   Troy Wu
-# @Last Modified time: 2020-02-21 16:05:14
+# @Last Modified time: 2020-03-04 21:08:41
 
 import pandas as pd
 import numpy as np
@@ -47,3 +47,8 @@ class Explore():
 	def pairplot(self, vars = None, hue = None):
 		sns.pairplot(self.df, vars = vars, hue = hue)
 		#plt.show()
+
+	def scatterplot(self):
+		f, ax = plt.subplots(len(self.df.columns), 1, figsize = (10, len(self.df.columns) * 6))
+		for n, col in enumerate(self.df.columns):
+			pd.DataFrame(self.df).reset_index().plot(kind = 'scatter', x = col, y = 'index', ax = ax[n])
