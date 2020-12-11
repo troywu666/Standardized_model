@@ -2,14 +2,14 @@
 # @Author: Troy Wu
 # @Date:   2020-02-14 13:25:27
 # @Last Modified by:   Troy Wu
-# @Last Modified time: 2020-02-18 14:36:31
+# @Last Modified time: 2020-04-22 12:06:38
 
 import xgboost as xgb
 import lightgbm as lgb
 
 class Prediction():
 	def __init__(self):
-		return None
+		pass
 
 	def feature_select(self, selector, test):
 		return selector.transform(test)

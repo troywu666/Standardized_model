@@ -2,11 +2,11 @@
 # @Author: Troy Wu
 # @Date:   2020-02-11 19:48:02
 # @Last Modified by:   Troy Wu
-# @Last Modified time: 2020-02-19 16:17:20
+# @Last Modified time: 2020-12-10 16:08:58
 
 import pandas as pd
 import numpy as np
-from sklearn.metrics import accuracy_score, confusion_matrix, f1_score, roc_auc_score, recall_score, precision_score
+from sklearn.metrics import accuracy_score, confusion_matrix, f1_score, roc_auc_score, recall_score, precision_score, roc_curve
 import matplotlib.pyplot as plt
 plt.style.use('seaborn-paper')
 import seaborn as sn
@@ -45,6 +45,10 @@ class Metrics():
 		plot_calibration_curve(self.y_true, [self.y_pred2], ax = axes[6])
 		#plt.show()
 
+	def get_best_threshold(self):
+		fpr, tpr, thresholds = roc_curve(self.y_true, self.y_pred1)
+		index = np.argmin((fpr**2 + (tpr-1)**2))
+		return thresholds[index]
 
 class Metrics_comparison(Metrics):
 	def __init__(self, y_true, y_pred):

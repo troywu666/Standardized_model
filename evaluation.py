@@ -2,7 +2,7 @@
 # @Author: Troy Wu
 # @Date:   2020-02-11 19:48:02
 # @Last Modified by:   Troy Wu
-# @Last Modified time: 2020-02-19 16:17:20
+# @Last Modified time: 2020-12-01 17:20:18
 
 import pandas as pd
 import numpy as np
@@ -21,7 +21,7 @@ class Metrics():
 			self.y_pred2 = True
 		else:
 			if y_pred.ndim == 1:
-				self.y_pred2 = np.array([1 - y_pred, y_pred]).T
+				self.y_pred2 = np.array([1- y_pred, y_pred]).T
 				self.y_pred1 = y_pred
 			if y_pred.ndim == 2:
 				self.y_pred2 = y_pred

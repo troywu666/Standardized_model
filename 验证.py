@@ -3,8 +3,8 @@
 @Version: 3.0
 @Autor: Troy Wu
 @Date: 2020-02-12 16:44:46
-@LastEditors: Troy Wu
-@LastEditTime: 2020-02-27 14:11:28
+LastEditors: Troy Wu
+LastEditTime: 2020-11-30 17:51:16
 '''
 
 # 首次运行可能需要将那些包所在路径加入到环境变量当中
@@ -57,8 +57,8 @@ save_log.logging('Exploring complete.')
 
 
 # 数据预处理
-transformer, transformed_data = Transformer(df['mean radius']).box_cox()
-transformer, transformed_data = Transformer(df).scaler('standard')
+#transformer, transformed_data = Transformer(df['mean radius']).box_cox()
+transformer_1, transformed_data = Transformer(df).scaler('standard')
 transformer, transformed_data = Transformer(transformed_data).fillna(fill_value = 2, strategy = 'constant')
 #transformer, transformed_data = Transformer(transformed_data).encoder(method = 'binarizer', threshold = 3)
 save_log.logging('Data preprocessing complete.')
@@ -96,7 +96,8 @@ Metrics_comparison(y_true, pred).compare_plot()
 save_log.logging('Evaluation complete.')
 
 # 模型预测
-transformed_data = Prediction().data_preprocess(transformer, df['mean texture'])
-selected_data = Prediction().feature_select(selector, transformed_data)
-Prediction().model_predict(model_lgb, df, model_cate = 'lgb')
+transformed_data_1 = Prediction().data_preprocess(transformer_1, df)
+transformed_data_2 = Prediction().data_preprocess(transformer, df)
+selected_data = Prediction().feature_select(selector, transformed_data_2)
+predictions = Prediction().model_predict(model_lgb, df, model_cate = 'lgb')
 save_log.logging('Prediction complete.')
