@@ -4,7 +4,7 @@ Version: 1.0
 Autor: Troy Wu
 Date: 2020-02-19 14:05:07
 LastEditors: Troy Wu
-LastEditTime: 2020-12-11 18:31:44
+LastEditTime: 2020-12-12 18:56:29
 '''
 import pandas as pd
 import numpy as np
@@ -15,6 +15,8 @@ from scipy import stats
 from sklearn.preprocessing import MinMaxScaler
 from statsmodels.stats.outliers_influence import variance_inflation_factor
 from statsmodels.tools.tools import add_constant
+import math
+from sklearn.ensemble import IsolationForest
 
 class Explore:
     def __init__(self, df):
@@ -37,10 +39,11 @@ class Explore:
             'na_pct': np.array([self.df[col].isnull().sum() / df_obj.shape[0] for col in df_obj.columns])}).sort_index(axis = 1)
         return des_obj
 
-    def corr_and_plot(self, figsize = (32, 18)): 
+    def corr_and_plot(self): 
         mcorr = self.df.corr()
         mask = np.zeros_like(mcorr, dtype=np.bool) 
-        plt.subplots(figsize = figsize)
+        mask[np.triu_indices_from(mask)] = True
+        plt.subplots(figsize = (5*len(mcorr), 5*len(mcorr)))
         cmap = sns.diverging_palette(220, 10, as_cmap=True)
         sns.heatmap(mcorr, mask = mask, annot = True, cmap = cmap, fmt='0.2f')
         plt.show()
@@ -56,31 +59,49 @@ class Explore:
     def pairplot(self, vars = None, hue = None):
         sns.pairplot(self.df, vars = vars, hue = hue)
         plt.show()
+        
+    def boxenplot(self):
+        df_num = self.df.select_dtypes(exclude = [np.object]).dropna()
+        #f, ax = plt.subplots(math.ceil(len(df_num.columns)/3), 3)  # 指定绘图对象宽度和高度
+        for i, col in enumerate(df_num.columns):
+            #a, b = divmod(i, 3)
+            plt.subplot(math.ceil(len(df_num.columns)/3), 3, i + 1)  # 15行3列子图
+            sns.boxenplot(df_num[col], orient = "v", width = 0.5)  # 箱式图
+            plt.ylabel(col, fontsize = 8)
+        plt.show()
 
     def plot_distplot_and_probplot(self):
-        df_num = self.df.select_dtypes(exclude = [np.object]).dropna()
-        train_cols = 6
-        train_rows = len(df_num.columns)
-        plt.figure(figsize = (5*train_cols, 5*train_rows))
+        try:
+            df_num = self.df.select_dtypes(exclude = [np.object]).dropna()
+            train_cols = 6
+            train_rows = len(df_num.columns)
+            plt.figure(figsize = (5*train_cols, 5*train_rows))
 
-        i = 0
-        for col in df_num.columns:
-            i += 1
-            ax = plt.subplot(train_rows, train_cols, i)
-            sns.distplot(df_num[col], fit = stats.norm)
-            
-            i += 1
-            ax = plt.subplot(train_rows, train_cols, i)
-            res = stats.probplot(df_num[col], plot = plt)
-        plt.show()
+            i = 0
+            for col in df_num.columns:
+                i += 1
+                ax = plt.subplot(train_rows, train_cols, i)
+                sns.distplot(df_num[col], fit = stats.norm)
+                
+                i += 1
+                ax = plt.subplot(train_rows, train_cols, i)
+                res = stats.probplot(df_num[col], plot = plt)
+            plt.show()
+        except:
+            print("矩阵不存在逆矩阵")
+
+    def anomaly_detection(self, params = {'n_estimators': 100}):
+        df_num = self.df.select_dtypes(exclude = [np.object])
+        iso = IsolationForest(**params)
+        return iso, iso.fit_predict(df_num)
         
     def VIF(self):
         df_num = self.df.select_dtypes(exclude = [np.object])
         min_max_scaler = MinMaxScaler().fit(df_num)
-        data_scaler = pd.DataFrame(min_max_scaler.transform(df_num), columns = df.columns)
+        data_scaler = pd.DataFrame(min_max_scaler.transform(df_num), columns = df_num.columns).dropna()
         X = np.matrix(data_scaler)
         X = add_constant(X, prepend = False)
-        return dict(zip(list(data_scaler.columns)), [variance_inflation_factor(X, i) for i in range(X.shape[1])])
+        return dict(zip(list(data_scaler.columns), [variance_inflation_factor(X, i) for i in range(X.shape[1])]))
         
             
 def compare_train_test(tarin_data, test_data):
@@ -105,3 +126,16 @@ def cate_countplot(cate_col, label, data):
         height = p.get_height() 
         plt.text(p.get_x(), height+500, height)
     plt.show()
+    
+def label_distribution(label, data):
+    plt.subplot(1, 2, 1)
+    ax = sns.countplot(x = label, data = data)
+    for p in ax.patches:
+        height = p.get_height() 
+        plt.text(p.get_x(), height+500, height)
+    
+    plt.subplot(1, 2, 2)
+    label_counts = data[label].value_counts().sort_index()
+    label_counts.plot(kind = 'pie')
+    plt.show()
+    return label_counts
