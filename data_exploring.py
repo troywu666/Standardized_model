@@ -4,7 +4,7 @@ Version: 1.0
 Autor: Troy Wu
 Date: 2020-02-19 14:05:07
 LastEditors: Troy Wu
-LastEditTime: 2020-12-12 18:56:29
+LastEditTime: 2020-12-14 22:14:10
 '''
 import pandas as pd
 import numpy as np
@@ -23,7 +23,7 @@ class Explore:
         self.df = df
 
     def describe_num(self):
-        df_num = self.df.select_dtypes(exclude = [np.object])
+        df_num = self.df.select_dtypes(include = [np.number])
         des_num = df_num.describe(percentiles = [0.125, 0.25, 0.375, 0.625, 0.75, 0.875, 0.9, 0.95, 0.99]).T.\
         assign(**{'偏度': np.array([df_num[col].skew() for col in df_num.columns]),
             '峰度': np.array([df_num[col].kurt() for col in df_num.columns]),
@@ -38,6 +38,13 @@ class Explore:
             **{'na_counts': np.array([self.df[col].isnull().sum() for col in df_obj.columns]),
             'na_pct': np.array([self.df[col].isnull().sum() / df_obj.shape[0] for col in df_obj.columns])}).sort_index(axis = 1)
         return des_obj
+    
+    def fill_na_inf_num(self, na_fill = 0, inf_fill = 0):
+        df_num = self.df.select_dtypes(exclude = [np.number])
+        val = df_num.values
+        val[np.isinf(val)] = inf_fill
+        val[np.isnan(val)] = na_fill
+        return pd.DataFrame(val, columns = df_num.columns)
 
     def corr_and_plot(self): 
         mcorr = self.df.corr()
@@ -49,7 +56,7 @@ class Explore:
         plt.show()
 
     def distplot(self):
-        df_num = self.df.select_dtypes(exclude = [np.object]).dropna()
+        df_num = self.df.select_dtypes(include = [np.number]).dropna()
         f, ax = plt.subplots(len(df_num.columns), 1, figsize = (10, len(df_num.columns) * 6))
         for n, col in enumerate(df_num.columns):
             sns.distplot(df_num[col], ax = ax[n])
@@ -61,7 +68,7 @@ class Explore:
         plt.show()
         
     def boxenplot(self):
-        df_num = self.df.select_dtypes(exclude = [np.object]).dropna()
+        df_num = self.df.select_dtypes(include = [np.number]).dropna()
         #f, ax = plt.subplots(math.ceil(len(df_num.columns)/3), 3)  # 指定绘图对象宽度和高度
         for i, col in enumerate(df_num.columns):
             #a, b = divmod(i, 3)
@@ -72,7 +79,7 @@ class Explore:
 
     def plot_distplot_and_probplot(self):
         try:
-            df_num = self.df.select_dtypes(exclude = [np.object]).dropna()
+            df_num = self.df.select_dtypes(include = [np.number]).dropna()
             train_cols = 6
             train_rows = len(df_num.columns)
             plt.figure(figsize = (5*train_cols, 5*train_rows))
@@ -91,12 +98,12 @@ class Explore:
             print("矩阵不存在逆矩阵")
 
     def anomaly_detection(self, params = {'n_estimators': 100}):
-        df_num = self.df.select_dtypes(exclude = [np.object])
+        df_num = self.df.select_dtypes(include = [np.number])
         iso = IsolationForest(**params)
         return iso, iso.fit_predict(df_num)
         
     def VIF(self):
-        df_num = self.df.select_dtypes(exclude = [np.object])
+        df_num = self.df.select_dtypes(include = [np.number])
         min_max_scaler = MinMaxScaler().fit(df_num)
         data_scaler = pd.DataFrame(min_max_scaler.transform(df_num), columns = df_num.columns).dropna()
         X = np.matrix(data_scaler)
