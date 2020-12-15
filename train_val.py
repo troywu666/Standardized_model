@@ -9,6 +9,7 @@ import numpy as np
 import lightgbm as lgb
 import xgboost as xgb
 from sklearn.model_selection import train_test_split
+from bayes_opt import BayesianOptimization
 
 class Model_training():
 	def __init__(self, train, target, test_size = 0.3):
@@ -48,7 +49,7 @@ class Model_training():
 							#'is_unbalance': True,
 							'learning_rate': 0.1,
 							'lambda_l1': 0.1,
-							'metric': 'auc',
+							'metric': {'auc', 'binary_logloss'},
 							'scale_pos_weight': 0.1
 							}):
 		X_train, X_test, y_train, y_test = train_test_split(self.train, self.target, test_size = self.test_size, random_state = 2020)
@@ -114,9 +115,8 @@ class SBBTree:
                                 early_stopping_rounds = 200)
                 self.bagging_model.append(gbm)
         
-        if self.cv_label:
-            lgb_train = lgb.Dataset(X, y)
-            lgb_eval = lgb.Dataset(X_test, y_test, reference = lgb_train)
+        elif self.cv_label:
+            lgb_train = lgb.Dataset(X, y, free_raw_data=False)
             self.gbm = lgb.cv(self.params, 
                               lgb_train,
                               nfold = self.bagging_num, 
@@ -146,3 +146,22 @@ class SBBTree:
         
         elif self.cv_label:
             return self.gbm.predict(X_pred, num_iteration = self.gbm.best_iteration)
+
+def bay_opt(X, y):
+    d_train = lgb.Dataset(df, data.target, free_raw_data=False)
+    def lgb_eval(max_depth, learning_rate, num_leaves, n_estimators):
+        params = {"metric" : 'auc',
+                        'max_depth': int(max(max_depth, 1)),
+                        'learning_rate': np.clip(0, 1, learning_rate),
+                        'num_leaves': int(max(num_leaves, 1)),
+                        'n_estimators': int(max(n_estimators, 1))}
+        cv_result = lgb.cv(params, d_train, nfold = 5, seed = 0, verbose_eval = 200, stratified = False)
+        return 1.0 * np.array(cv_result['auc-mean']).max()
+
+    lgbBO = BayesianOptimization(lgb_eval, {'max_depth': (4, 8),
+                                                'learning_rate': (0.05, 0.2),
+                                                'num_leaves' : (20,1500),
+                                                'n_estimators': (5, 200)}, random_state=0)
+
+    lgbBO.maximize(init_points=5, n_iter=50,acq='ei')
+    return lgbBO.max

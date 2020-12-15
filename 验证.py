@@ -4,14 +4,14 @@
 @Autor: Troy Wu
 @Date: 2020-02-12 16:44:46
 LastEditors: Troy Wu
-LastEditTime: 2020-11-30 17:51:16
+LastEditTime: 2020-12-15 18:51:49
 '''
 
 # 首次运行可能需要将那些包所在路径加入到环境变量当中
 import sys
 sys.path.append(r'D:\troywu666\business_stuff\民生对公项目\模型标准化')
 from evaluation import Metrics, Metrics_comparison
-from train_val import Model_training
+from train_val import Model_training, Bayes_opt_lgb
 from model_io import Model_pickle
 from data_exploring import Explore
 from feature_selection import Selector
@@ -74,6 +74,10 @@ save_log.logging('Feature selection complete.')
 model_xgb, y_true, y_pred_xgb = Model_training(selected_data, data.target, test_size = 0.3).xgb_model()
 model_lgb, y_true, y_pred_lgb = Model_training(selected_data, data.target, test_size = 0.3).lgb_model()
 save_log.logging('Model training complete.')
+
+bay = Bayes_opt_lgb()
+bay.fit(df, data.target)
+bay.get_best_params()
 
 # 模型保存
 Model_pickle().dump(transformer, path, 'transformer')
