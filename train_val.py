@@ -8,7 +8,8 @@ import pandas as pd
 import numpy as np
 import lightgbm as lgb
 import xgboost as xgb
-from sklearn.model_selection import train_test_split, StratifiedKFold
+from sklearn.model_selection import train_test_split, StratifiedKFold, cross_val_score
+from sklearn.ensemble import RandomForestClassifier
 from bayes_opt import BayesianOptimization
 
 class Model_training():
@@ -121,7 +122,7 @@ class SBBTree:
                 y_train = y[train_index]
                 X_test = X.iloc[test_index, :]
                 y_test = y[test_index]  
-                lgb_train =  = lgb.Dataset(X_train, y_train, categorical_feature = self.categorical_feature)
+                lgb_train = lgb.Dataset(X_train, y_train, categorical_feature = self.categorical_feature)
                 lgb_eval = lgb.Dataset(X_test, y_test, reference = lgb_train)
                 gbm = lgb.train(self.params,
                                 lgb_train, 
@@ -148,21 +149,38 @@ class SBBTree:
                 pred_out += pred
         return pred_out / self.bagging_num
 
-def bay_opt(X, y):
+def bay_opt_lgb(X, y):
     d_train = lgb.Dataset(df, data.target, free_raw_data=False)
     def lgb_eval(max_depth, learning_rate, num_leaves, n_estimators):
         params = {"metric" : 'auc',
-                        'max_depth': int(max(max_depth, 1)),
-                        'learning_rate': np.clip(0, 1, learning_rate),
-                        'num_leaves': int(max(num_leaves, 1)),
-                        'n_estimators': int(max(n_estimators, 1))}
+                  'max_depth': int(max(max_depth, 1)),
+                  'learning_rate': np.clip(0, 1, learning_rate),
+                  'num_leaves': int(max(num_leaves, 1)),
+                  'n_estimators': int(max(n_estimators, 1))}
         cv_result = lgb.cv(params, d_train, nfold = 5, seed = 0, verbose_eval = 200, stratified = False)
         return 1.0 * np.array(cv_result['auc-mean']).max()
 
     lgbBO = BayesianOptimization(lgb_eval, {'max_depth': (4, 8),
-                                                'learning_rate': (0.05, 0.2),
-                                                'num_leaves' : (20,1500),
-                                                'n_estimators': (5, 200)}, random_state=0)
+                                            'learning_rate': (0.05, 0.2),
+                                            'num_leaves' : (20,1500),
+                                            'n_estimators': (5, 200)}, random_state=0)
 
-    lgbBO.maximize(init_points=5, n_iter=50,acq='ei')
+    lgbBO.maximize(init_points=5, n_iter=50, acq='ei')
     return lgbBO.max
+
+def bay_opt_rf(X, y):
+    def rf_cv(n_estimators, min_samples_split, max_features, max_depth):
+        val = cross_val_score(RandomForestClassifier(n_estimators=int(n_estimators),
+                               min_samples_split=int(min_samples_split),
+                               max_features=min(max_features, 0.999), # float
+                               max_depth=int(max_depth),
+                               random_state=2), X, y, scoring='roc_auc', cv=5).mean()
+        return val
+    rf_bo = BayesianOptimization(rf_cv,
+                                 {'n_estimators': (10, 250),
+                                  'min_samples_split': (2, 25),
+                                  'max_features': (0.1, 0.999),
+                                  'max_depth': (5, 15)})
+
+    rf_bo.maximize(init_points=5, n_iter=50, acq='ei')
+    return rf_bo.max
