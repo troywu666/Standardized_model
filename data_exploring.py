@@ -4,7 +4,7 @@ Version: 1.0
 Autor: Troy Wu
 Date: 2020-02-19 14:05:07
 LastEditors: Troy Wu
-LastEditTime: 2020-12-15 13:56:31
+LastEditTime: 2020-12-16 00:17:38
 '''
 import pandas as pd
 import numpy as np
@@ -134,7 +134,7 @@ def cate_countplot(cate_col, label, data):
         plt.text(p.get_x(), height+500, height)
     plt.show()
     
-def label_distribution(label, data):
+def cate_distribution(label, data):
     plt.subplot(1, 2, 1)
     ax = sns.countplot(x = label, data = data)
     for p in ax.patches:

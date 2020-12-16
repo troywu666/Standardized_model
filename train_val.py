@@ -8,7 +8,7 @@ import pandas as pd
 import numpy as np
 import lightgbm as lgb
 import xgboost as xgb
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, StratifiedKFold
 from bayes_opt import BayesianOptimization
 
 class Model_training():
@@ -66,7 +66,7 @@ class Model_training():
 
 class SBBTree:
     def __init__(self, params, stacking_num, bagging_num, bagging_test_size,
-                 num_boost_round, early_stopping_rounds,cv_label, categorical_feature = 'auto'):
+                 num_boost_round, early_stopping_rounds,kf_label = True, categorical_feature = 'auto'):
         self.params = params
         self.stacking_num = stacking_num
         self.bagging_num = bagging_num
@@ -76,7 +76,7 @@ class SBBTree:
         self.model = lgb
         self.stacking_model = []
         self.bagging_model = []
-        self.cv_label = cv_label
+        self.kf_label = kf_label
         
     def fit(self, X, y):
         if self.stacking_num > 1:
@@ -102,28 +102,33 @@ class SBBTree:
         else:
             pass
         
-        if not self.cv_label:
+        if not self.kf_label:
             for bn in range(self.bagging_num):
                 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = self.bagging_test_size,
                                                                     random_state = bn)
-                lgb_train = lgb.Dataset(X_train, y_train)
+                lgb_train = lgb.Dataset(X_train, y_train, categorical_feature = self.categorical_feature)
                 lgb_eval = lgb.Dataset(X_test, y_test, reference = lgb_train)
                 gbm = lgb.train(self.params,
                                 lgb_train, 
                                 num_boost_round = 10000,
-                                valid_sets = lgb_eval,
+                                valid_sets = [lgb_train, lgb_eval],
                                 early_stopping_rounds = 200)
-                self.bagging_model.append(gbm)
-        
-        elif self.cv_label:
-            lgb_train = lgb.Dataset(X, y, free_raw_data=False)
-            self.gbm = lgb.cv(self.params, 
-                              lgb_train,
-                              nfold = self.bagging_num, 
-                              stratified = True, 
-                              shuffle = True, 
-                              num_boost_round = 10000,
-                              early_stopping_rounds = 200)           
+                self.bagging_model.append(gbm) 
+                
+        elif self.kf_label:  
+            for n, (train_index, test_index) in enumerate(StratifiedKFold(self.bagging_num, shuffle = True, random_state = 0).split(X, y)):   
+                X_train = X.iloc[train_index, :]
+                y_train = y[train_index]
+                X_test = X.iloc[test_index, :]
+                y_test = y[test_index]  
+                lgb_train =  = lgb.Dataset(X_train, y_train, categorical_feature = self.categorical_feature)
+                lgb_eval = lgb.Dataset(X_test, y_test, reference = lgb_train)
+                gbm = lgb.train(self.params,
+                                lgb_train, 
+                                num_boost_round = 10000,
+                                valid_sets = [lgb_train, lgb_eval],
+                                early_stopping_rounds = 200)
+                self.bagging_model.append(gbm) 
             
     def predict(self, X_pred):
         if self.stacking_num > 1:
@@ -135,17 +140,13 @@ class SBBTree:
         else:
             pass
 
-        if not self.cv_label:
-            for bn, gbm in enumerate(self.bagging_num):
-                pred = gbm.predict(X_pred, num_iteration = gbm.best_iteration)
-                if bn == 0:
-                    pred_out = pred
-                else:
-                    pred_out += pred
-            return pred_out / self.bagging_num
-        
-        elif self.cv_label:
-            return self.gbm.predict(X_pred, num_iteration = self.gbm.best_iteration)
+        for bn, gbm in enumerate(self.bagging_model):
+            pred = gbm.predict(X_pred, num_iteration = gbm.best_iteration)
+            if bn == 0:
+                pred_out = pred
+            else:
+                pred_out += pred
+        return pred_out / self.bagging_num
 
 def bay_opt(X, y):
     d_train = lgb.Dataset(df, data.target, free_raw_data=False)

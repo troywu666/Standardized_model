@@ -1,3 +1,11 @@
+'''
+Description: 
+Version: 1.0
+Autor: Troy Wu
+Date: 2020-02-11 19:48:02
+LastEditors: Troy Wu
+LastEditTime: 2020-12-16 15:20:37
+'''
 # -*- coding: utf-8 -*-
 # @Author: Troy Wu
 # @Date:   2020-02-11 19:48:02
@@ -44,6 +52,11 @@ class Metrics():
 		plot_cumulative_gain(self.y_true, self.y_pred2, ax = axes[5])
 		plot_calibration_curve(self.y_true, [self.y_pred2], ax = axes[6])
 		#plt.show()
+	
+	def get_best_threshold(self):
+		fpr, tpr, thresholds = roc_curve(self.y_true, self.y_pred1)
+		index = np.argmin((fpr**2 + (tpr-1)**2))
+		return thresholds[index]
 
 
 class Metrics_comparison(Metrics):
