@@ -13,6 +13,7 @@ from sklearn.base import TransformerMixin
 import pandas as pd
 import numpy as np
 from scipy import stats
+from tqdm import tqdm_notebook
 
 class Box_cox(TransformerMixin):
 	def __init__(self):

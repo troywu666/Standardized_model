@@ -51,7 +51,18 @@ class Model_training():
 							'learning_rate': 0.1,
 							'lambda_l1': 0.1,
 							'metric': {'auc', 'binary_logloss'},
-							'scale_pos_weight': 0.1
+							'scale_pos_weight': 20,
+                            'bggging_freq': 5,
+                            'lambda_l2': 2,
+                            'tree_method': 'exact',
+                            'silent': False,
+                            'seed': 2020,
+                            'colsample_bytree': 0.7,
+                            'colsample_bylevel': 0.7,
+                            'subsample': 0.7,
+                            'num_leaves': 2**5,
+                            'min_split_gain': 1,
+                            'max_delta_step': 1.5,
 							}):
 		X_train, X_test, y_train, y_test = train_test_split(self.train, self.target, test_size = self.test_size, random_state = 2020)
 		

@@ -4,17 +4,17 @@
 @Autor: Troy Wu
 @Date: 2020-02-12 16:44:46
 LastEditors: Troy Wu
-LastEditTime: 2020-12-15 18:51:49
+LastEditTime: 2020-12-18 18:04:06
 '''
 
 # 首次运行可能需要将那些包所在路径加入到环境变量当中
 import sys
 sys.path.append(r'D:\troywu666\business_stuff\民生对公项目\模型标准化')
 from evaluation import Metrics, Metrics_comparison
-from train_val import Model_training, Bayes_opt_lgb
+from train_val import Model_training, bay_opt_lgb
 from model_io import Model_pickle
 from data_exploring import Explore
-from feature_selection import Selector
+from feature_selection import Selector, iv_filter
 from preprocessing import Transformer
 from predict import Prediction
 from print_in_log import Save_log
@@ -68,6 +68,9 @@ selector, selected_data = Selector(transformed_data).filter(data.target, k = 30,
 selector, selected_data = Selector(transformed_data).wrapper(RandomForestClassifier(), data.target, n = 30, step = 10)
 selector, selected_data = Selector(transformed_data).embedded(LogisticRegression(), data.target, threshold = 0.03)
 selector, selected_data = Selector(transformed_data).variance(threshold = 0.001)
+selector, selected_data = Selector(df).filter(data.target, k = 30, method = 'IV')
+
+iv_filter(df, data.target)
 save_log.logging('Feature selection complete.')
 
 # 模型训练
@@ -75,9 +78,7 @@ model_xgb, y_true, y_pred_xgb = Model_training(selected_data, data.target, test_
 model_lgb, y_true, y_pred_lgb = Model_training(selected_data, data.target, test_size = 0.3).lgb_model()
 save_log.logging('Model training complete.')
 
-bay = Bayes_opt_lgb()
-bay.fit(df, data.target)
-bay.get_best_params()
+bay = bay_opt_lgb(df, data.target)
 
 # 模型保存
 Model_pickle().dump(transformer, path, 'transformer')
