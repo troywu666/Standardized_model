@@ -44,3 +44,27 @@
 2020-11-30 17:51:29,584 - print_in_log.py[line:29] - INFO: Model load complete.
 2020-11-30 17:51:30,009 - print_in_log.py[line:29] - INFO: Evaluation complete.
 2020-11-30 17:51:30,019 - print_in_log.py[line:29] - INFO: Prediction complete.
+2020-12-19 12:06:01,417 - print_in_log.py[line:29] - INFO: DataFrame load complete.
+2020-12-19 12:21:37,046 - print_in_log.py[line:29] - INFO: 'DataFrame' object has no attribute 'value_counts'
+2020-12-19 12:33:37,715 - print_in_log.py[line:41] - ERROR: Traceback (most recent call last):
+  File "<ipython-input-1-7c6e9935cc66>", line 36, in <module>
+    df.value_counts()
+  File "E:\ProgramData\Anaconda3\lib\site-packages\pandas\core\generic.py", line 5274, in __getattr__
+    return object.__getattribute__(self, name)
+AttributeError: 'DataFrame' object has no attribute 'value_counts'
+
+2020-12-19 12:36:18,854 - print_in_log.py[line:45] - INFO: DataFrame load complete.
+2020-12-19 12:38:12,921 - print_in_log.py[line:41] - ERROR: Traceback (most recent call last):
+  File "<ipython-input-3-59f4b4dd6f47>", line 2, in <module>
+    df.value_counts()
+  File "E:\ProgramData\Anaconda3\lib\site-packages\pandas\core\generic.py", line 5274, in __getattr__
+    return object.__getattribute__(self, name)
+AttributeError: 'DataFrame' object has no attribute 'value_counts'
+
+2020-12-19 12:39:52,123 - print_in_log.py[line:41] - ERROR: Traceback (most recent call last):
+  File "<ipython-input-1-ec09e3338349>", line 36, in <module>
+    df.value_counts()
+  File "E:\ProgramData\Anaconda3\lib\site-packages\pandas\core\generic.py", line 5274, in __getattr__
+    return object.__getattribute__(self, name)
+AttributeError: 'DataFrame' object has no attribute 'value_counts'
+

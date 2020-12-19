@@ -4,7 +4,7 @@ Version: 1.0
 Autor: Troy Wu
 Date: 2020-02-11 04:34:22
 LastEditors: Troy Wu
-LastEditTime: 2020-12-18 18:05:00
+LastEditTime: 2020-12-18 18:11:57
 '''
 
 from sklearn.feature_selection import VarianceThreshold, SelectFromModel, RFE
@@ -63,7 +63,7 @@ class Selector():
 				not_zero_index = (groups[t0] > 0) & (groups[t1] > 0)
 				groups['iv_i'] = (groups[t0] - groups[t1]) * np.log(groups[t0] / groups[t1])
 				groups['iv_i'][~not_zero_index] = 0 
-        		iv = groups['iv_i'].sum(axis = 0)
+				iv = groups['iv_i'].sum(axis = 0)
 			
 				return iv
 

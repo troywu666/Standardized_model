@@ -1,3 +1,11 @@
+'''
+Description: 
+Version: 1.0
+Autor: Troy Wu
+Date: 2020-02-14 12:26:50
+LastEditors: Troy Wu
+LastEditTime: 2020-12-19 12:39:35
+'''
 # -*- coding: utf-8 -*-
 # @Author: Troy Wu
 # @Date:   2020-02-14 12:26:50
@@ -5,6 +13,7 @@
 # @Last Modified time: 2020-02-19 12:12:45
 
 import logging
+import traceback
 
 class Save_log():
 	def __init__(self, path, logfile_name):
@@ -25,5 +34,8 @@ class Save_log():
 		logger.addHandler(fh)
 		logger.addHandler(ch)
 
-	def logging(self, statement):
+	def info(self, statement):
 		logging.info(statement)
+  
+	def error(self):
+		logging.error(traceback.format_exc())

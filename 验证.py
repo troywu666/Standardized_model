@@ -4,7 +4,7 @@
 @Autor: Troy Wu
 @Date: 2020-02-12 16:44:46
 LastEditors: Troy Wu
-LastEditTime: 2020-12-18 18:04:06
+LastEditTime: 2020-12-19 12:38:09
 '''
 
 # 首次运行可能需要将那些包所在路径加入到环境变量当中
@@ -41,7 +41,11 @@ path = r'D:/troywu666/business_stuff/民生对公项目/模型标准化'
 save_log = Save_log(path, 'test')
 
 path = r'D:/troywu666/business_stuff/民生对公项目/模型标准化'
-save_log.logging('DataFrame load complete.')
+try:
+    df.value_counts()
+    save_log.info('DataFrame load complete.')
+except:
+    save_log.error()
 
 '''lr = LogisticRegression()
 lr.fit(data.data, data.target)
@@ -53,7 +57,7 @@ num_des = Explore(df).describe_num()
 Explore(df).corr_and_plot()
 Explore(df).distplot()
 #Explore(df).pairplot()
-save_log.logging('Exploring complete.')
+save_log.info('Exploring complete.')
 
 
 # 数据预处理
@@ -61,7 +65,7 @@ save_log.logging('Exploring complete.')
 transformer_1, transformed_data = Transformer(df).scaler('standard')
 transformer, transformed_data = Transformer(transformed_data).fillna(fill_value = 2, strategy = 'constant')
 #transformer, transformed_data = Transformer(transformed_data).encoder(method = 'binarizer', threshold = 3)
-save_log.logging('Data preprocessing complete.')
+save_log.info('Data preprocessing complete.')
 
 # 特征选择
 selector, selected_data = Selector(transformed_data).filter(data.target, k = 30, method = 'mutual_clas_filter')
@@ -71,12 +75,12 @@ selector, selected_data = Selector(transformed_data).variance(threshold = 0.001)
 selector, selected_data = Selector(df).filter(data.target, k = 30, method = 'IV')
 
 iv_filter(df, data.target)
-save_log.logging('Feature selection complete.')
+save_log.info('Feature selection complete.')
 
 # 模型训练
 model_xgb, y_true, y_pred_xgb = Model_training(selected_data, data.target, test_size = 0.3).xgb_model()
 model_lgb, y_true, y_pred_lgb = Model_training(selected_data, data.target, test_size = 0.3).lgb_model()
-save_log.logging('Model training complete.')
+save_log.info('Model training complete.')
 
 bay = bay_opt_lgb(df, data.target)
 
@@ -85,24 +89,24 @@ Model_pickle().dump(transformer, path, 'transformer')
 Model_pickle().dump(selector, path, 'selector')
 Model_pickle().dump(model_xgb, path, 'xgb_model')
 Model_pickle().dump(model_lgb, path, 'lgb_model')
-save_log.logging('Model dump complete.')
+save_log.info('Model dump complete.')
 
 # 模型加载
 transformer = Model_pickle().load(path, 'transformer')
 selector = Model_pickle().load(path, 'selector')
 model_xgb = Model_pickle().load(path, 'xgb_model')
 model_lgb = Model_pickle().load(path, 'lgb_model')
-save_log.logging('Model load complete.')
+save_log.info('Model load complete.')
 
 # 模型评估
 pred = {'xgb': y_pred_xgb, 'lgb': y_pred_lgb}
 compare_score = Metrics_comparison(y_true, pred).compare_score()
 Metrics_comparison(y_true, pred).compare_plot()
-save_log.logging('Evaluation complete.')
+save_log.info('Evaluation complete.')
 
 # 模型预测
 transformed_data_1 = Prediction().data_preprocess(transformer_1, df)
 transformed_data_2 = Prediction().data_preprocess(transformer, df)
 selected_data = Prediction().feature_select(selector, transformed_data_2)
 predictions = Prediction().model_predict(model_lgb, df, model_cate = 'lgb')
-save_log.logging('Prediction complete.')
+save_log.info('Prediction complete.')
