@@ -4,60 +4,62 @@
 @Autor: Troy Wu
 @Date: 2020-02-12 16:44:46
 LastEditors: Troy Wu
-LastEditTime: 2020-12-19 12:38:09
+LastEditTime: 2020-12-19 14:44:22
 '''
 
-# 首次运行可能需要将那些包所在路径加入到环境变量当中
-import sys
-sys.path.append(r'D:\troywu666\business_stuff\民生对公项目\模型标准化')
-from evaluation import Metrics, Metrics_comparison
-from train_val import Model_training, bay_opt_lgb
-from model_io import Model_pickle
-from data_exploring import Explore
-from feature_selection import Selector, iv_filter
-from preprocessing import Transformer
-from predict import Prediction
-from print_in_log import Save_log
-from sklearn.datasets import load_breast_cancer
-import pandas as pd
-import numpy as np
-from sklearn.linear_model import LogisticRegression
-from sklearn.ensemble import RandomForestClassifier
-#import logging
-#import configparser
-
-'''config = configparser.ConfigParser()
-config['server'] = {'user': 'dbc', 'password': 'pass', 'host': '192.168.253.231', 'port': '22', 'dbname': 'server1'}
-with open(r'D:/troywu666/business_stuff/民生对公项目/模型标准化/configuration.ini', 'w') as f:
-    config.write(f)'''
-
-# 载入数据集
-data = load_breast_cancer()
-df = pd.DataFrame(data.data, columns = data.feature_names)
-df.iloc[2, -1] = np.nan
-
-# 实例化日志打印模块
-path = r'D:/troywu666/business_stuff/民生对公项目/模型标准化'
-save_log = Save_log(path, 'test')
-
-path = r'D:/troywu666/business_stuff/民生对公项目/模型标准化'
 try:
+    # 首次运行可能需要将那些包所在路径加入到环境变量当中
+    import sys
+    sys.path.append(r'D:\troywu666\business_stuff\民生对公项目\模型标准化')
+    from evaluation import Metrics, Metrics_comparison
+    from train_val import Model_training, bay_opt_lgb
+    from model_io import Model_pickle
+    from data_exploring import Explore
+    from feature_selection import Selector, iv_filter
+    from preprocessing import Transformer
+    from predict import Prediction
+    from print_in_log import Save_log
+    from sklearn.datasets import load_breast_cancer
+    import pandas as pd
+    import numpy as np
+    from sklearn.linear_model import LogisticRegression
+    from sklearn.ensemble import RandomForestClassifier
+    #import logging
+    #import configparser
+
+    '''config = configparser.ConfigParser()
+    config['server'] = {'user': 'dbc', 'password': 'pass', 'host': '192.168.253.231', 'port': '22', 'dbname': 'server1'}
+    with open(r'D:/troywu666/business_stuff/民生对公项目/模型标准化/configuration.ini', 'w') as f:
+        config.write(f)'''
+
+    # 载入数据集
+    data = load_breast_cancer()
+    df = pd.DataFrame(data.data, columns = data.feature_names)
+    df.iloc[2, -1] = np.nan
+
+    # 实例化日志打印模块
+    path = r'D:/troywu666/business_stuff/民生对公项目/模型标准化'
+    save_log = Save_log(path, 'test')
+
+    path = r'D:/troywu666/business_stuff/民生对公项目/模型标准化'
+        
+
+    '''lr = LogisticRegression()
+    lr.fit(data.data, data.target)
+    y_pred = lr.predict_proba(data.data)[:, 1]
+    y_pred = {'rf': y_pred, "lr": y_pred}
+    '''
+    # 数据探索
+    num_des = Explore(df).describe_num()
+    Explore(df).corr_and_plot()
+    Explore(df).distplot()
+    #Explore(df).pairplot()
+
+    save_log.info('Exploring complete.')
     df.value_counts()
     save_log.info('DataFrame load complete.')
 except:
     save_log.error()
-
-'''lr = LogisticRegression()
-lr.fit(data.data, data.target)
-y_pred = lr.predict_proba(data.data)[:, 1]
-y_pred = {'rf': y_pred, "lr": y_pred}
-'''
-# 数据探索
-num_des = Explore(df).describe_num()
-Explore(df).corr_and_plot()
-Explore(df).distplot()
-#Explore(df).pairplot()
-save_log.info('Exploring complete.')
 
 
 # 数据预处理
