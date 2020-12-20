@@ -4,7 +4,7 @@ Version: 1.0
 Autor: Troy Wu
 Date: 2020-02-11 04:34:22
 LastEditors: Troy Wu
-LastEditTime: 2020-12-21 01:01:59
+LastEditTime: 2020-12-21 01:25:13
 '''
 
 from sklearn.feature_selection import VarianceThreshold, SelectFromModel, RFE
@@ -102,10 +102,10 @@ def iv_filter(data, label, n_bins = 10):
         # 计算IV
         groups = x.groupby([x, list(y)]).size().unstack().fillna(0)
         t0, t1 = pd.Series(y).value_counts().index
-        groups = groups / groups.sum()
-        not_zero_index = (groups[t0] > 0) & (groups[t1] > 0)
+        groups = groups.replace(0, 1) / groups.sum()
+        #not_zero_index = (groups[t0] > 0) & (groups[t1] > 0)
         groups['iv_i'] = (groups[t0] - groups[t1]) * np.log((groups[t0]) / (groups[t1]))
-        groups['iv_i'][~not_zero_index] = 0 
+        #groups['iv_i'][~not_zero_index] = 0 
         iv = groups['iv_i'].sum(axis = 0)
         return iv
     return data.apply(lambda x: cal_iv(x, label), axis=0)
