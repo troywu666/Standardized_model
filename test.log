@@ -1,16 +1,4 @@
-2020-12-19 14:45:15,142 - print_in_log.py[line:33] - INFO: Exploring complete.
-2020-12-19 14:45:15,147 - print_in_log.py[line:36] - ERROR: Traceback (most recent call last):
-  File "<ipython-input-1-1cd547b3faf5>", line 43, in <module>
-    df.value_counts()
-  File "E:\ProgramData\Anaconda3\lib\site-packages\pandas\core\generic.py", line 5274, in __getattr__
-    return object.__getattribute__(self, name)
-AttributeError: 'DataFrame' object has no attribute 'value_counts'
-
-2020-12-21 01:21:17,589 - print_in_log.py[line:33] - INFO: Exploring complete.
-2020-12-21 01:21:17,597 - print_in_log.py[line:36] - ERROR: Traceback (most recent call last):
-  File "<ipython-input-1-7252261027fd>", line 43, in <module>
-    df.value_counts()
-  File "E:\ProgramData\Anaconda3\lib\site-packages\pandas\core\generic.py", line 5274, in __getattr__
-    return object.__getattribute__(self, name)
-AttributeError: 'DataFrame' object has no attribute 'value_counts'
-
+2020-12-22 19:25:45,199 - print_in_log.py[line:36] - INFO: 
+ Exploring complete.
+2020-12-22 19:25:45,199 - print_in_log.py[line:36] - INFO: 
+ {'a': 1, 'b': 2}
