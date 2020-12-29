@@ -4,7 +4,7 @@ Version: 1.0
 Autor: Troy Wu
 Date: 2020-02-11 19:48:02
 LastEditors: Troy Wu
-LastEditTime: 2020-12-27 14:20:12
+LastEditTime: 2020-12-29 10:32:42
 '''
 # -*- coding: utf-8 -*-
 # @Author: Troy Wu
@@ -19,6 +19,7 @@ import matplotlib.pyplot as plt
 plt.style.use('seaborn-paper')
 import seaborn as sn
 from scikitplot.metrics import plot_confusion_matrix, plot_calibration_curve, plot_roc, plot_ks_statistic, plot_precision_recall, plot_lift_curve, plot_cumulative_gain
+from functools import reduce
 
 class Metrics():
 	def __init__(self, y_true, y_pred):
@@ -88,3 +89,18 @@ class Metrics_comparison(Metrics):
 				self.y_pred1 = pred.argmax(axis = 1)
 			self.eval_plot()
 			#plt.show()
+
+def weightedKS(y_pred, y_true, weight = 1):
+	if weight == 1:
+		fpr, tpr, thresholds = roc_curve(y_true, y_pred1)
+	elif isinstance(weight, list):
+		lis = [i for i in zip(y_pred, y_true, weight)]
+		reversed_lis = sorted(lis, keys = lambda x: [0], reverse = True)
+		ks = list()
+		pos = np.cumsum([w for (p, y, w) in lis if y > 0.5])
+		neg = np.cumsum([w for (p, y, w) in lis if y < 0.5])
+		pos_all = reduce(lambda x, y: x+y, [w for (p, y, w) in lis if y > 0.5])
+		neg_all = reduce(lambda x, y: x+y, [w for (p, y, w) in lis if y <= 0.5])
+		tpr = pos / pos_all
+		fpr = neg / neg_all
+	return max(tpr-fpr)
