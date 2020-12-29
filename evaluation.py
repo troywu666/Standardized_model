@@ -4,7 +4,7 @@ Version: 1.0
 Autor: Troy Wu
 Date: 2020-02-11 19:48:02
 LastEditors: Troy Wu
-LastEditTime: 2020-12-29 10:40:07
+LastEditTime: 2020-12-29 10:42:42
 '''
 # -*- coding: utf-8 -*-
 # @Author: Troy Wu
@@ -96,8 +96,8 @@ def weightedKS(y_true, y_pred, weight = 1):
 	elif isinstance(weight, list):
 		lis = [i for i in zip(y_pred, y_true, weight)]
 		reversed_lis = sorted(lis, keys = lambda x: [0], reverse = True)
-		pos = np.cumsum([w for (p, y, w) in reversed_lis if y > 0.5])
-		neg = np.cumsum([w for (p, y, w) in reversed_lis if y < 0.5])
+		pos = np.cumsum(np.array([w for (p, y, w) in reversed_lis if y > 0.5]))
+		neg = np.cumsum(np.array([w for (p, y, w) in reversed_lis if y < 0.5]))
 		pos_all = reduce(lambda x, y: x+y, [w for (p, y, w) in reversed_lis if y > 0.5])
 		neg_all = reduce(lambda x, y: x+y, [w for (p, y, w) in reversed_lis if y <= 0.5])
 		tpr = pos / pos_all
