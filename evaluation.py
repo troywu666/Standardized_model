@@ -4,7 +4,7 @@ Version: 1.0
 Autor: Troy Wu
 Date: 2020-02-11 19:48:02
 LastEditors: Troy Wu
-LastEditTime: 2020-12-29 10:32:42
+LastEditTime: 2020-12-29 10:40:07
 '''
 # -*- coding: utf-8 -*-
 # @Author: Troy Wu
@@ -14,7 +14,7 @@ LastEditTime: 2020-12-29 10:32:42
 
 import pandas as pd
 import numpy as np
-from sklearn.metrics import accuracy_score, confusion_matrix, f1_score, roc_auc_score, recall_score, precision_score
+from sklearn.metrics import accuracy_score, confusion_matrix, f1_score, roc_auc_score, recall_score, precision_score, roc_curve
 import matplotlib.pyplot as plt
 plt.style.use('seaborn-paper')
 import seaborn as sn
@@ -90,17 +90,16 @@ class Metrics_comparison(Metrics):
 			self.eval_plot()
 			#plt.show()
 
-def weightedKS(y_pred, y_true, weight = 1):
+def weightedKS(y_true, y_pred, weight = 1):
 	if weight == 1:
-		fpr, tpr, thresholds = roc_curve(y_true, y_pred1)
+		fpr, tpr, thresholds = roc_curve(y_true, y_pred)
 	elif isinstance(weight, list):
 		lis = [i for i in zip(y_pred, y_true, weight)]
 		reversed_lis = sorted(lis, keys = lambda x: [0], reverse = True)
-		ks = list()
-		pos = np.cumsum([w for (p, y, w) in lis if y > 0.5])
-		neg = np.cumsum([w for (p, y, w) in lis if y < 0.5])
-		pos_all = reduce(lambda x, y: x+y, [w for (p, y, w) in lis if y > 0.5])
-		neg_all = reduce(lambda x, y: x+y, [w for (p, y, w) in lis if y <= 0.5])
+		pos = np.cumsum([w for (p, y, w) in reversed_lis if y > 0.5])
+		neg = np.cumsum([w for (p, y, w) in reversed_lis if y < 0.5])
+		pos_all = reduce(lambda x, y: x+y, [w for (p, y, w) in reversed_lis if y > 0.5])
+		neg_all = reduce(lambda x, y: x+y, [w for (p, y, w) in reversed_lis if y <= 0.5])
 		tpr = pos / pos_all
 		fpr = neg / neg_all
 	return max(tpr-fpr)
