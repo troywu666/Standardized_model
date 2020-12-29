@@ -4,7 +4,7 @@
 @Autor: Troy Wu
 @Date: 2020-02-12 16:44:46
 LastEditors: Troy Wu
-LastEditTime: 2020-12-22 19:39:53
+LastEditTime: 2020-12-27 14:23:56
 '''
 
 try:
@@ -57,7 +57,6 @@ try:
 
     save_log.info('Exploring complete.')
     #df.value_counts()
-    save_log.info(**{'a': 1, "b": 2})
 
 
     # 数据预处理

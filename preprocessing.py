@@ -4,7 +4,7 @@ Version: 1.0
 Autor: Troy Wu
 Date: 2020-02-11 06:46:40
 LastEditors: Troy Wu
-LastEditTime: 2020-12-12 13:56:09
+LastEditTime: 2020-12-29 09:59:42
 '''
 
 from sklearn.preprocessing import MinMaxScaler, StandardScaler, OrdinalEncoder, OneHotEncoder, Binarizer, PowerTransformer
@@ -14,6 +14,7 @@ import pandas as pd
 import numpy as np
 from scipy import stats
 from tqdm import tqdm_notebook
+import math
 
 class Box_cox(TransformerMixin):
 	def __init__(self):
@@ -120,7 +121,6 @@ class Data_Preprocess:
         print('Original data occupies {} GB memory.'.format(init_memory))
         df_cols = df.columns
 
-          
         for col in tqdm_notebook(df_cols):
             try:
                 if 'float' in str(df[col].dtypes):
@@ -140,3 +140,86 @@ class Data_Preprocess:
         afterprocess_memory = df.memory_usage().sum() / 1024 ** 2 / 1024
         print('After processing, the data occupies {} GB memory.'.format(afterprocess_memory))
         return df
+  
+class WoeEncode:
+    def __init__(self, data, label, cols):
+        data[cols] = data[cols].astype(str)
+        self.train = data[data[label].notnull()]
+        self.test = data[data[label].isnull()]
+        self.label = label
+        self.cols = cols
+        self.nrows, self.ncols = self.train.shape
+        
+    def char_woe(self):
+        dic = dict(self.train[self.label].value_counts())
+        good = dic.get(1, 0) + 1e-10
+        bad = dic.get(0, 0) + 1e-10
+        for col in self.cols:
+            data = dict(self.train.groupby([col, self.label]).size())
+            if len(data) > 100:
+                print(col, 'contains too many different values.')
+                continue
+            dic = dict()
+            for k, v in data.items():
+                value, dp = k
+                dic.setdefault(value, {})
+                dic[value][int(dp)] = v
+            for k, v in dic.items():
+                dic[k] = {str(int(k1)): v1 for k1, v1 in v.items()}
+                dic[k]['cnt'] = sum(v.values())
+                pos_rate = round(v.get('1', 0) / dic[k]['cnt'], 5)
+                dic[k]['pos_rate'] = pos_rate
+            dic = self.combine_box_char(dic)
+            for k, v in dic.items():
+                a = v.get('0', 1)/good + 1e-10
+                b = v.get('1', 1)/bad + 1e-10
+                dic[k]['Pos'] = v.get('1', 0)
+                dic[k]['Neg'] = v.get('0', 0)
+                dic[k]['woe'] = round(math.log(a/b), 5)
+            for klis, v in dic.items():
+                for k in klis.split(','):
+                    self.train.loc[self.train[col] == k, '{}_woe'.format(col)] = v['woe']
+                    if not isinstance(self.test, str):
+                        self.test.loc[self.test[col] == k, '{}_woe'.format(col)] = v['woe']
+        return pd.concat([self.train, self.test], axis = 0)
+    
+    def combine_box_char(self, dic):
+        while len(dic) >= 10:
+            pos_rate_dic = {k: v['pos_rate'] for k,v in dic.items()}
+            pos_rate_sorted = sorted(pos_rate_dic.items(), key = lambda x: x[1], reverse = False)
+            pos_rate = [pos_rate_sorted[i+1] - pos_rate_sorted[i] for i in range(len(pos_rate_sorted) - 1)]
+            min_rate_index = pos_rate.index(min(pos_rate))
+            k1, k2 = pos_rate_sorted[min_rate_index][0], pos_rate_sorted[min_rate_index+1][0]
+            dic['{},{}'.format(k1, k2)] = dict()
+            dic['{},{}'.format(k1, k2)]['1'] = dic[k1].get('1', 0) + dic[k2].get('1', 0)
+            dic['{},{}'.format(k1, k2)]['0'] = dic[k1].get('1', 0) + dic[k2].get('0', 0)
+            dic['{},{}'.format(k1, k2)]['cnt'] = dic[k1].get('cnt', 0) + dic[k2].get('cnt', 0)
+            dic['{},{}'.format(k1, k2)]['pos_rate'] = round(dic['{},{}'.format(k1, k2)]['1']/dic['{},{}'.format(k1, k2)]['cnt'], 5)
+            del dic[k1], dic[k2]
+            
+        min_cnt = min([v['cnt'] for v in dic.values()])
+        while min_cnt < self.nrows*0.05 and len(dic) > 5:
+            min_key = [k for k, v in dic.items() if v['cnt'] == min_cnt][0]
+            pos_rate_dic = {k: v['pos_rate'] for k, v in dic.items()}
+            pos_rate_sorted = sorted(pos_rate_dic.items(), key = lambda x: x[1], reverse = False)
+            keys = [k[0] for k in pos_rate_sorted]
+            min_index = keys.index(min_key)
+            if min_index == 0:
+                k1, k2 = keys[: 2]
+            elif min_index == len(dic)-1:
+                k1, k2 = keys[-2: ]
+            else:
+                before_pos_rate = dic[min_key]['pos_rate'] - dic[keys[min_index-1]]['pos_rate']
+                after_pos_rate = dic[keys[min_index+1]]['pos_rate'] - dic[min_key]['pos_rate']
+                if before_pos_rate <= after_pos_rate:
+                    k1, k2 = keys[min_index-1], min_key
+                else:
+                    k1, k2 = min_key, keys[min_index+1]
+            dic['{},{}'.format(k1, k2)] = dict()
+            dic['{},{}'.format(k1, k2)]['1'] = dic[k1].get('1', 0) + dic[k2].get('1', 0)
+            dic['{},{}'.format(k1, k2)]['0'] = dic[k1].get('1', 0) + dic[k2].get('0', 0)
+            dic['{},{}'.format(k1, k2)]['cnt'] = dic[k1].get('cnt', 0) + dic[k2].get('cnt', 0)
+            dic['{},{}'.format(k1, k2)]['pos_rate'] = round(dic['{},{}'.format(k1, k2)]['1']/dic['{},{}'.format(k1, k2)]['cnt'], 5)
+            del dic[k1], dic[k2]
+            min_cnt = min([v['cnt'] for v in dic.values()])
+        return dic

@@ -4,7 +4,7 @@ Version: 1.0
 Autor: Troy Wu
 Date: 2020-02-11 19:48:02
 LastEditors: Troy Wu
-LastEditTime: 2020-12-16 15:20:37
+LastEditTime: 2020-12-27 14:20:12
 '''
 # -*- coding: utf-8 -*-
 # @Author: Troy Wu
@@ -33,7 +33,7 @@ class Metrics():
 				self.y_pred1 = y_pred
 			if y_pred.ndim == 2:
 				self.y_pred2 = y_pred
-				self.y_pred1 = y_pred.argmax(axis = 1)
+				self.y_pred1 = y_pred[:, 1]
 
 	def eval_score(self):
 		return {'accuracy_score': accuracy_score(self.y_true, self.y_pred1.round()), \
