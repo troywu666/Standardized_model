@@ -4,7 +4,7 @@ Version: 1.0
 Autor: Troy Wu
 Date: 2020-02-19 14:05:07
 LastEditors: Troy Wu
-LastEditTime: 2020-12-16 00:17:38
+LastEditTime: 2021-01-01 16:07:52
 '''
 import pandas as pd
 import numpy as np
@@ -27,10 +27,11 @@ class Explore:
         des_num = df_num.describe(percentiles = [0.125, 0.25, 0.375, 0.625, 0.75, 0.875, 0.9, 0.95, 0.99]).T.\
         assign(**{'偏度': np.array([df_num[col].skew() for col in df_num.columns]),
             '峰度': np.array([df_num[col].kurt() for col in df_num.columns]),
+            '唯一值个数': np.array([df_num[col].nunique() for col in df_num.columns]),
             'na_counts': np.array([df_num[col].isnull().sum() for col in df_num.columns]),
             'na_pct': np.array([df_num[col].isnull().sum() / df_num.shape[0] for col in df_num.columns])}).sort_index(axis = 1)
         return des_num[['min', '12.5%', '25%', '37.5%', '50%', '62.5%', '75%', '87.5%', '90%', '95%', '99%', 'max', \
-            'count', '偏度', '峰度', 'mean', 'std', 'na_pct', 'na_counts']]
+            'count', '偏度', '峰度', '唯一值个数', 'mean', 'std', 'na_pct', 'na_counts']]
     
     def describe_obj(self):
         df_obj = self.df.select_dtypes(include = [np.object])
@@ -59,7 +60,7 @@ class Explore:
         df_num = self.df.select_dtypes(include = [np.number]).dropna()
         f, ax = plt.subplots(len(df_num.columns), 1, figsize = (10, len(df_num.columns) * 6))
         for n, col in enumerate(df_num.columns):
-            sns.distplot(df_num[col], ax = ax[n])
+            sns.distplot(df_num[col], ax = ax[n], kde_kws = {'bw': 1.5})
             plt.title(col)
         plt.show()
 
@@ -111,7 +112,7 @@ class Explore:
         return dict(zip(list(data_scaler.columns), [variance_inflation_factor(X, i) for i in range(X.shape[1])]))
         
             
-def compare_train_test(tarin_data, test_data):
+def compare_train_test(train_data, test_data):
     dist_cols = 6
     dist_rows = len(test_data.columns)
     plt.figure(figsize = (5*dist_cols, 5*dist_rows))
@@ -146,3 +147,17 @@ def cate_distribution(label, data):
     label_counts.plot(kind = 'pie')
     plt.show()
     return label_counts
+
+def num_label_distplot(num_cols, label, data):
+    
+    dist_rows = len(num_cols)
+    dist_cols = len(label)
+    f, ax = plt.subplots(dist_rows, dist_cols, figsize = (5*dist_cols, 5*dist_rows))
+
+    i = 0
+    for col in num_cols:
+        for label_ in list(data[label].unique()):
+            axes = sns.distplot(data[col][data[label] == label_], ax = ax[i])
+            axes.set_xlabel(col)
+            axes.set_ylabel('Distribution')
+    plt.show()
