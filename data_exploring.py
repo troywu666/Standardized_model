@@ -4,7 +4,7 @@ Version: 1.0
 Autor: Troy Wu
 Date: 2020-02-19 14:05:07
 LastEditors: Troy Wu
-LastEditTime: 2021-01-03 15:48:36
+LastEditTime: 2021-01-03 15:50:01
 '''
 import pandas as pd
 import numpy as np
@@ -126,14 +126,15 @@ def compare_train_test(train_data, test_data):
         ax.legend(['train', 'test'])
     plt.show()
     
-def cate_countplot(cate_col, label, data):
-    plt.figure(figsize = (8, 8))
-    plt.title('{} Vs {}'.format(cate_col, label))
-    ax = sns.countplot(cate_col, data = data.fillna('missing'), hue = label)
-    for p in ax.patches:
-        height = p.get_height() 
-        plt.text(p.get_x(), height+500, height)
-    plt.show()
+def cate_countplot(cate_cols, label, data):
+    for cate_col in cate_cols:
+        plt.figure(figsize = (8, 8))
+        plt.title('{} Vs {}'.format(cate_col, label))
+        ax = sns.countplot(cate_col, data = data.fillna('missing'), hue = label)
+        for p in ax.patches:
+            height = p.get_height() 
+            plt.text(p.get_x(), height+500, height)
+        plt.show()
     
 def label_distribution(label, data):
     plt.subplot(1, 2, 1)
