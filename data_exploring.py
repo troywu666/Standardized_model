@@ -4,7 +4,7 @@ Version: 1.0
 Autor: Troy Wu
 Date: 2020-02-19 14:05:07
 LastEditors: Troy Wu
-LastEditTime: 2021-01-01 16:07:52
+LastEditTime: 2021-01-03 15:48:36
 '''
 import pandas as pd
 import numpy as np
@@ -135,7 +135,7 @@ def cate_countplot(cate_col, label, data):
         plt.text(p.get_x(), height+500, height)
     plt.show()
     
-def cate_distribution(label, data):
+def label_distribution(label, data):
     plt.subplot(1, 2, 1)
     ax = sns.countplot(x = label, data = data)
     for p in ax.patches:
@@ -151,13 +151,13 @@ def cate_distribution(label, data):
 def num_label_distplot(num_cols, label, data):
     
     dist_rows = len(num_cols)
-    dist_cols = len(label)
-    f, ax = plt.subplots(dist_rows, dist_cols, figsize = (5*dist_cols, 5*dist_rows))
+    dist_cols = data[label].nunique()
+    f, ax = plt.subplots(dist_rows, dist_cols, figsize = (8*dist_cols, 8*dist_rows))
 
-    i = 0
-    for col in num_cols:
-        for label_ in list(data[label].unique()):
-            axes = sns.distplot(data[col][data[label] == label_], ax = ax[i])
+    for i, col in enumerate(num_cols):
+        for j, label_ in enumerate(list(data[label].unique())):
+            axes = sns.distplot(data[col][data[label] == label_], ax = ax[i][j])
             axes.set_xlabel(col)
-            axes.set_ylabel('Distribution')
+            # axes.set_ylabel('Distribution')
+            axes.legend('{} distribution of {}'.format(col, label_))
     plt.show()
