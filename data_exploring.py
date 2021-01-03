@@ -4,7 +4,7 @@ Version: 1.0
 Autor: Troy Wu
 Date: 2020-02-19 14:05:07
 LastEditors: Troy Wu
-LastEditTime: 2021-01-03 15:50:01
+LastEditTime: 2021-01-03 19:02:52
 '''
 import pandas as pd
 import numpy as np
@@ -162,3 +162,13 @@ def num_label_distplot(num_cols, label, data):
             # axes.set_ylabel('Distribution')
             axes.legend('{} distribution of {}'.format(col, label_))
     plt.show()
+    
+def find_outliers_by_3segama(df, fea):
+    data = df.copy()
+    data_std = np.std(data[fea])
+    data_mean = np.mean(data[fea])
+    outliers_cut_off = data_std*3
+    lower_rule = data_mean - outliers_cut_off
+    upper_rule = data_mean + outliers_cut_off
+    data[fea + '_outliers'] = data[fea].apply(lambda x: '异常值' if x>upper_rule or x<lower_rule else '正常值')
+    return data
